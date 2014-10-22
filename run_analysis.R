@@ -56,6 +56,7 @@ TrainX <- TrainX[ColsToKeep]
 TestAll <- cbind(TestSubject,TestY, TestX)
 TrainAll <- cbind(TrainSubject,TrainY, TrainX)
 
+
 ##
 ##
 ## combine the 2 sets of data using the Row Bind Function
