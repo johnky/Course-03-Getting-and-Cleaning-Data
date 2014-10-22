@@ -1,5 +1,7 @@
 library(dplyr)
 
+##
+##
 ## Load all Data Files
 TestX <- read.table("UCI HAR Dataset/test/X_test.txt")
 TestY <- read.table("UCI HAR Dataset/test/y_test.txt")
@@ -15,13 +17,13 @@ features <- read.table("UCI HAR Dataset/features.txt")
 
 ##
 ##
-##Change the data in TestY and TrainY to add on the Activity Label
+##Change the Activity Label in the Y file so that the data contains the activity instead of the ID
 TestY$V1 <- activity_labels[TestY$V1,]$V2
 TrainY$V1 <- activity_labels[TrainY$V1,]$V2
 
 ##
 ##
-## change the column names on the test data
+## change the column names on the various data tables (Subject tables, Y tables and X Tables)
 colnames(TestSubject) <- c("SubjectID")
 colnames(TrainSubject) <- c("SubjectID")
 
@@ -34,25 +36,34 @@ colnames(TrainX) <- c(as.vector(features$V2))
 ##
 ##
 ## Create a Vector of only the Columns that are Mean or STD 
-## drop all other column names
+## These will be the columns we keep from the data tables
 AllColsNames <- names(TestX)
 ColsToKeep <- AllColsNames[grep("mean|std",AllColsNames)]
+
+## drop the meanFreq column since it was pulled along with the mean
 ColsToKeep <- ColsToKeep[grep("meanFreq",ColsToKeep,invert=TRUE)]
 
-AllColsNames <- paste("Mean of", AllColsNames)
 
+##
+##
 ## Create a subset of the data based on those column names
 TestX <- TestX[ColsToKeep]
 TrainX <- TrainX[ColsToKeep]
 
-## combine the data by column first
+##
+##
+## combine the data by column first using the Column Bind Function
 TestAll <- cbind(TestSubject,TestY, TestX)
 TrainAll <- cbind(TrainSubject,TrainY, TrainX)
 
-## combine the 2 sets of data
+##
+##
+## combine the 2 sets of data using the Row Bind Function
 AllData <- rbind(TestAll, TrainAll)
 
-## Rename the columns
+##
+##
+## Rename the columns - just a straight out hack job right here
 fixcols <- names(AllData)
 fixcols <- sub("mean","Mean",fixcols)
 fixcols <- sub("std","StandardDeviation",fixcols)
@@ -83,18 +94,25 @@ fixcols <- sub("GravityAcc-","GravityAccelerometer",fixcols)
 
 fixcols <- sub("()","",fixcols,fixed=TRUE)
 
-## Apply the new column headers
+
+##
+##
+## fixcols now contains what I want to call the columns so apply it back
 colnames(AllData) <- fixcols
 
 
 
-
+##
+##
+## The Grand function of all....just find the mean of the Data columns grouping by the SubjectID and Activit
 AllDataMean <- AllData %>% 
                 group_by(SubjectID, Activity) %>% 
                 summarise_each(funs(mean))
 
 
-
+##
+##
+## write out tables in various formats 
 write.table(AllData,"AllData.txt",row.name=FALSE, sep = ",")
 write.table(AllData, file = "AllData.csv", sep = ",", col.names = NA, qmethod = "double")
 
