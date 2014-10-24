@@ -107,18 +107,28 @@ colnames(AllData) <- fixcols
 
 ##
 ##
-## The Grand function of all....just find the mean of the Data columns grouping by the SubjectID and Activit
+## The Grand function of all....just find the mean of the Data columns grouping by the SubjectID and Activity
 AllDataMean <- AllData %>% 
                 group_by(SubjectID, Activity) %>% 
                 summarise_each(funs(mean))
 
 
-
+##
+##
+## Create the Tidy data
 AllDataMean <- melt(AllDataMean,id=c("SubjectID","Activity"))
 
+
+
+##
+##
+## Rename the columns
 colnames(AllDataMean) <- c("SubjectID","Activity","Feature","MeanValue")
 
 
+##
+##
+## change the sort order
 AllDataMean <- arrange(AllDataMean, SubjectID, Activity, Feature)
 
 
