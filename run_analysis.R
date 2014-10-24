@@ -1,4 +1,6 @@
 library(dplyr)
+library(reshape2)
+
 
 ##
 ##
@@ -66,8 +68,8 @@ AllData <- rbind(TestAll, TrainAll)
 ##
 ## Rename the columns - just a straight out hack job right here
 fixcols <- names(AllData)
-fixcols <- sub("mean","Mean",fixcols)
-fixcols <- sub("std","StandardDeviation",fixcols)
+fixcols <- sub("mean"," Mean",fixcols)
+fixcols <- sub("std"," Standard Deviation",fixcols)
 
 fixcols <- sub("x$","X",fixcols)
 fixcols <- sub("y$","Y",fixcols)
@@ -76,22 +78,22 @@ fixcols <- sub("z$","Z",fixcols)
 #the above messings up my 2nd columns...quick fix
 fixcols[2] <- "Activity"
 
-fixcols <- sub("^t","Time",fixcols)
-fixcols <- sub("^f","FastFourierTransform",fixcols)
+fixcols <- sub("^t","Time - ",fixcols)
+fixcols <- sub("^f","Fast Fourier Transform - ",fixcols)
 
-fixcols <- sub("BodyBodyGyroJerkMag-","BodyBodyGyroscopeJerkMagnitude",fixcols)
-fixcols <- sub("BodyBodyAccJerkMag-","BodyBodyAccelerometerJerkMagnitude",fixcols) 
-fixcols <- sub("BodyBodyGyroMag-","BodyBodyGyroscopeMagnitude",fixcols) 
-fixcols <- sub("BodyAccJerkMag-","BodyAccelerometerJerkMagnitude",fixcols) 
-fixcols <- sub("BodyAccMag-","BodyAccelerometerMagnitude",fixcols) 
-fixcols <- sub("BodyAccJerk-","BodyAccelerometerJerk",fixcols) 
-fixcols <- sub("BodyAcc-","BodyAccelerometer",fixcols) 
-fixcols <- sub("BodyGyroJerkMag-","BodyGyroscopeJerkMagnitude",fixcols) 
-fixcols <- sub("BodyGyroMag-","BodyGyroscopeMagnitude",fixcols) 
-fixcols <- sub("BodyGyroJerk-","BodyGyroscopeJerk",fixcols) 
-fixcols <- sub("BodyGyro-","BodyGyroscope",fixcols) 
-fixcols <- sub("GravityAccMag-","GravityAccelerometerMagnitude",fixcols) 
-fixcols <- sub("GravityAcc-","GravityAccelerometer",fixcols) 
+fixcols <- sub("BodyBodyGyroJerkMag-","Body Body Gyroscope Jerk Magnitude",fixcols)
+fixcols <- sub("BodyBodyAccJerkMag-","Body Body Accelerometer Jerk Magnitude",fixcols) 
+fixcols <- sub("BodyBodyGyroMag-","Body Body Gyroscope Magnitude",fixcols) 
+fixcols <- sub("BodyAccJerkMag-","Body Accelerometer Jerk Magnitude",fixcols) 
+fixcols <- sub("BodyAccMag-","Body Accelerometer Magnitude",fixcols) 
+fixcols <- sub("BodyAccJerk-","Body Accelerometer Jerk",fixcols) 
+fixcols <- sub("BodyAcc-","Body Accelerometer",fixcols) 
+fixcols <- sub("BodyGyroJerkMag-","Body Gyroscope Jerk Magnitude",fixcols) 
+fixcols <- sub("BodyGyroMag-","Body Gyroscope Magnitude",fixcols) 
+fixcols <- sub("BodyGyroJerk-","Body Gyroscope Jerk",fixcols) 
+fixcols <- sub("BodyGyro-","Body Gyroscope",fixcols) 
+fixcols <- sub("GravityAccMag-","Gravity Accelerometer Magnitude",fixcols) 
+fixcols <- sub("GravityAcc-","Gravity Accelerometer",fixcols) 
 
 fixcols <- sub("()","",fixcols,fixed=TRUE)
 
@@ -109,6 +111,17 @@ colnames(AllData) <- fixcols
 AllDataMean <- AllData %>% 
                 group_by(SubjectID, Activity) %>% 
                 summarise_each(funs(mean))
+
+
+
+AllDataMean <- melt(AllDataMean,id=c("SubjectID","Activity"))
+
+colnames(AllDataMean) <- c("SubjectID","Activity","Feature","MeanValue")
+
+
+AllDataMean <- arrange(AllDataMean, SubjectID, Activity, Feature)
+
+
 
 
 ##

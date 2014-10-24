@@ -40,6 +40,9 @@ This was using the dplyr library.
 The dplyr makes it fast and efficient with code to produce the output that was needed.
 
 
+To create the Tidy table, the reshape2 was used.
+Using the Melt function it was very easy to rearrange the data to create the Tidy table.
+
 
 Finally, I wrote out the table in various formats that I could view.  
 
