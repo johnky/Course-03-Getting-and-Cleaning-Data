@@ -1,4 +1,4 @@
-##DATA DICTIONARY - Getting and Cleaning Data Course Project presented in Tidy data
+DATA DICTIONARY - Getting and Cleaning Data Course Project presented in Tidy data
 
 SubjectID	
 	Subject ID for the Activity Data
